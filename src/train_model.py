@@ -4,9 +4,12 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix
 import joblib
+import os
 
+#0. Setting output dir
+outputFolder = "models"
 # 1. Load the features
-df = pd.read_csv('data/features/malayalam_features.csv')
+df = pd.read_csv(r'C:\Users\caath\OneDrive\เอกสาร\Projects\miniProject\malayalam_speech2Sign\data\features\malayalam_features.csv')
 
 # 2. Separate Features (X) and Labels (y)
 X = df.drop('label', axis=1)
@@ -17,9 +20,9 @@ y = df['label']
 label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(y)
 
-# 4. Train-Test Split (80% training, 20% testing)
+# 4. Train-Test Split (85% training, 15% testing)
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
+    X, y_encoded, test_size=0.15, random_state=42, stratify=y_encoded
 )
 
 # 5. Scaling
@@ -35,7 +38,7 @@ param_grid = {
 }
 
 print("Searching for the best C and Gamma...")
-grid = GridSearchCV(SVC(), param_grid, refit=True, verbose=1, cv=5)
+grid = GridSearchCV(SVC(), param_grid, refit=True, verbose=1, cv=5, n_jobs=-1)
 grid.fit(X_train_scaled, y_train)
 
 # 7. Evaluate
@@ -49,7 +52,16 @@ print("\n--- Classification Report ---")
 print(classification_report(y_test, predictions, target_names=label_encoder.classes_))
 
 # 8. Save the "Brain" for your friend (Mediapipe lead)
-joblib.dump(best_model, 'models/malayalam_svm.pkl')
-joblib.dump(scaler, 'models/scaler.pkl')
-joblib.dump(label_encoder, 'models/label_encoder.pkl')
-print("\n✅ Model and Scalers saved to models/ folder!")
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+    print(f"Created folder: {outputFolder}")
+
+model_path = os.path.join(outputFolder, 'malayalam_svm.pkl')
+scaler_path = os.path.join(outputFolder, 'scaler.pkl')
+encoder_path = os.path.join(outputFolder, 'label_encoder.pkl')
+
+joblib.dump(best_model, model_path)
+joblib.dump(scaler, scaler_path)
+joblib.dump(label_encoder, encoder_path)
+
+print(f"\n✅ Model and Scalers saved successfully to the '{outputFolder}' folder!")
