@@ -3,12 +3,16 @@ import numpy as np
 import joblib
 import sounddevice as sd # For live recording
 import soundfile as sf
+from pathlib import Path
+
+# Define the base directory for your models
+models_dir = Path("models")
 
 # 1. Load the "Brain" and the Scalers
-model = joblib.load('models/malayalam_svm.pkl')
-scaler = joblib.load('models/scaler.pkl')
-label_encoder = joblib.load('models/label_encoder.pkl')
 
+model = joblib.load(models_dir / "malayalam_svm.pkl")
+scaler = joblib.load(models_dir / "scaler.pkl")
+label_encoder = joblib.load(models_dir / "label_encoder.pkl")
 def predict_live_speech():
     # 2. Record 1 second of audio
     fs = 16000
