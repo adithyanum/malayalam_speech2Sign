@@ -68,7 +68,6 @@ Given the constrained dataset (6 target words, 30 samples each), we took a delib
 | Stage | Count |
 |-------|-------|
 | Base recordings (6 words × 30 samples) | 180 |
-| After augmentation (white noise · pitch shift · speed variation) | **1,800** |
 
 Source: [`ai4Bharat/IndicVoices`](https://huggingface.co/ai4bharat) corpus on HuggingFace — multiple native speakers, realistic acoustic conditions.
 
