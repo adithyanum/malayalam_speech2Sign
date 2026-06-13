@@ -5,8 +5,22 @@ import sounddevice as sd
 import sys
 import pandas as pd
 import warnings
+import cv2
+from sign_renderer import play_sign
 
 warnings.filterwarnings("ignore", category=UserWarning)
+
+
+# ── Malayalam label → landmark file mapping ───────────────────
+LABEL_MAP = {
+    'ഇപ്പോൾ': 'now',
+    'ഞാൻ':    'me',
+    'പൂച്ച':  'cat',
+    'വീട്':   'house',
+    'സന്തോഷം':'happy',
+    'സമയം':  'time',
+}
+
 
 # Load the optimized model pipeline
 try:
@@ -99,6 +113,17 @@ if __name__ == "__main__":
                 print(f"✨ Result: {word}")
                 print(f"📈 Confidence: {int(confidence * 100)}%")
 
+
+                # Map Malayalam label → English landmark filename
+                eng_label = LABEL_MAP[word]
+                print(eng_label)
+                
+                if eng_label:
+                    print(f"🖐  Showing ISL sign for: {eng_label}  (close window to continue)")
+                    # Play on main thread — required on macOS
+                    play_sign(eng_label, confidence, loop=True)
+                else:
+                    print(f"⚠️  No landmark file mapped for '{word}'")
             # User control loop
             choice = input("\n[ENTER] to record again | [Q] to quit: ").lower()
             if choice == 'q':
